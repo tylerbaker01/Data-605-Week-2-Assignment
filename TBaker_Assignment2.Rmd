@@ -1,0 +1,45 @@
+---
+title: "Assignment Week 2"
+author: "Tyler Baker"
+date: "2/5/2022"
+output: html_document
+---
+
+# Week 2 Assignment
+
+## Part 1
+
+I have a handwritten proof posted here:
+
+https://github.com/tylerbaker01/Data-605-Week-2-Part-1
+
+# Part 2
+
+Create an LU - Decomposition function.
+
+
+Originally, I thought that U could not have a 0 in the diagonal. I thought this becuase of the leading submatrices condition. I was wrong. There are some matrices that will have an LU decomposition where the U can have zeros in the main diagonal. I went along with it anyways because 1) I assume that those cases are pretty rare. 2) Being able to solve for L in terms of U and A might be interesting to look at.
+
+Here, when I solving for what I named "almost_lower" I will get extra constants above the main diagonal. This is becuase U isn't completely invertible. However, by just chopping off these values I will obtain L.
+
+
+```{r}
+#create a function
+lu_dec <- function(mat) {
+  #solve for U.
+  upper <- refmatrix(mat)
+  #Set some conditions for the function to work.
+  if ( 0 %in% diag(upper)){
+    stop("This function doesn't work when there is a zero in the diagonal of the row echelon form of matrix A.")
+  }else{
+        u_transpose <- t(upper)
+        #solve for L in terms of U, t(U), inv(U), and A.
+  almost_lower <- mat %*% u_transpose %*% invmatrix(upper%*%u_transpose)
+  # Solving for almost_lower gives an infinite number of matrices, wherer the entries above the main diagonal can be any constatnts. However, we know which one we want. Therefore we can eliminate all of those unwanted constants just by turning them into zeros. 
+  lower <- matrix(0,ncol(almost_lower) ,ncol(almost_lower))
+  lower <- upper_kill(almost_lower)
+  }
+  print(upper)
+  print(lower)
+}
+```
